@@ -48,11 +48,11 @@ export function ProductCard({ product, compact = false, onViewDetail }: ProductC
         <div className={`flex flex-1 flex-col ${compact ? "gap-3 p-3" : "gap-4 p-5 sm:p-6"}`}>
           <div>
             <p className={`${compact ? "text-xs" : "text-sm"} font-medium text-[color:var(--secondary)]`}>{product.category}</p>
-            <h3 className={`mt-1 font-semibold tracking-tight text-[color:var(--foreground)] ${compact ? "line-clamp-4 text-[1.1rem] leading-7" : "text-xl"}`}>
+            <h3 className={`mt-1 font-semibold tracking-tight text-[color:var(--foreground)] ${compact ? "line-clamp-3 text-sm leading-3 md:text-base md:leading-6 lg:text-[1.1rem] lg:leading-7" : "text-xl"}`}>
               {product.title}
             </h3>
           </div>
-          <p className={`${compact ? "line-clamp-2 text-xs leading-6" : "line-clamp-3 text-sm leading-7"} text-[color:var(--muted)]`}>{product.description}</p>
+          {/* <p className={`${compact ? "line-clamp-2 text-xs leading-6" : "line-clamp-3 text-sm leading-7"} text-[color:var(--muted)]`}>{product.description}</p> */}
           <div className={`mt-auto flex ${compact ? "flex-col items-start gap-3" : "items-center justify-between gap-4"}`}>
             <div>
               <p className="text-xs font-medium uppercase tracking-[0.2em] text-[color:var(--muted)]">Harga</p>

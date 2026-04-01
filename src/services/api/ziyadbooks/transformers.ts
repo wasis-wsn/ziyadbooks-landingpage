@@ -51,7 +51,7 @@ export function normalizeProduct(item: Record<string, unknown>, index: number): 
 
   const description =
     toText(item.description ?? item.short_description ?? item.summary ?? item.deskripsi) ||
-    `Katalog buku Islami dari Ziyad Books dalam kategori ${category || "pilihan pembaca"}.`;
+    `Buku pilihan dalam kategori ${category || "pilihan pembaca"}.`;
 
   const originalPrice = toNumber(item.price ?? item.normal_price ?? item.selling_price ?? item.harga);
 

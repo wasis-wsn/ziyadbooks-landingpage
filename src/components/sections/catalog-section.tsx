@@ -127,7 +127,7 @@ export function CatalogSection({ products, categories, errorMessage }: CatalogSe
       </Card>
 
       {visibleProducts.length > 0 ? (
-        <div className="grid grid-cols-2 gap-2.5 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+        <div className="grid grid-cols-2 gap-2.5 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
           {visibleProducts.map((product) => (
             <ProductCard key={product.id} product={product} compact onViewDetail={setSelectedProduct} />
           ))}
