@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import type { CatalogProduct, ProductCategory } from "@/types/catalog";
@@ -15,12 +15,51 @@ interface CatalogSectionProps {
   errorMessage: string | null;
 }
 
+const sortOptions = [
+  { value: "featured", label: "Featured" },
+  { value: "price-asc", label: "Harga termurah" },
+  { value: "price-desc", label: "Harga tertinggi" },
+];
+
 export function CatalogSection({ products, categories, errorMessage }: CatalogSectionProps) {
   const [query, setQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
   const [sortMode, setSortMode] = useState("featured");
+  const [isSortOpen, setIsSortOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<CatalogProduct | null>(null);
+  const sortDropdownRef = useRef<HTMLDivElement | null>(null);
   const debouncedQuery = useDebouncedValue(query, 180);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!sortDropdownRef.current) {
+        return;
+      }
+
+      if (!sortDropdownRef.current.contains(event.target as Node)) {
+        setIsSortOpen(false);
+      }
+    };
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsSortOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, []);
+
+  const activeSortLabel = useMemo(() => {
+    const option = sortOptions.find((item) => item.value === sortMode);
+    return option?.label ?? "Featured";
+  }, [sortMode]);
 
   const visibleProducts = useMemo(() => {
     const normalizedQuery = debouncedQuery.trim().toLowerCase();
@@ -78,19 +117,54 @@ export function CatalogSection({ products, categories, errorMessage }: CatalogSe
             />
           </label>
 
-          <label className="flex items-center gap-3 rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface-alt)] px-4 py-3">
-            <span className="text-sm font-semibold text-[color:var(--muted)]">Urutkan</span>
-            <select
-              value={sortMode}
-              onChange={(event) => setSortMode(event.target.value)}
-              className="w-full bg-transparent text-sm text-[color:var(--foreground)] outline-none"
-              aria-label="Urutkan produk"
-            >
-              <option value="featured">Featured</option>
-              <option value="price-asc">Harga termurah</option>
-              <option value="price-desc">Harga tertinggi</option>
-            </select>
-          </label>
+          <div ref={sortDropdownRef} className="relative">
+            <div className="flex items-center justify-between gap-3 rounded-2xl border border-[color:var(--border)] bg-[color:var(--surface-alt)] px-4 py-3">
+              <span className="text-sm font-semibold text-[color:var(--muted)]">Urutkan</span>
+              <button
+                type="button"
+                onClick={() => setIsSortOpen((current) => !current)}
+                aria-haspopup="listbox"
+                aria-expanded={isSortOpen}
+                className="inline-flex min-w-[10rem] items-center justify-between gap-2 rounded-xl border border-[color:var(--border)] bg-white px-3 py-2 text-left text-sm font-medium text-[color:var(--foreground)] shadow-sm transition-colors hover:border-[color:var(--secondary)]"
+              >
+                <span>{activeSortLabel}</span>
+                <svg
+                  viewBox="0 0 24 24"
+                  className={`h-4 w-4 transition-transform ${isSortOpen ? "rotate-180" : "rotate-0"}`}
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+            </div>
+
+            {isSortOpen ? (
+              <div className="absolute right-0 top-[calc(100%+0.55rem)] z-20 w-[12rem] overflow-hidden rounded-2xl border border-[color:var(--border)] bg-white shadow-[0_22px_48px_-35px_rgba(15,23,42,0.5)]">
+                <ul role="listbox" aria-label="Urutkan produk" className="p-2">
+                  {sortOptions.map((option) => (
+                    <li key={option.value}>
+                      <button
+                        type="button"
+                        role="option"
+                        aria-selected={sortMode === option.value}
+                        onClick={() => {
+                          setSortMode(option.value);
+                          setIsSortOpen(false);
+                        }}
+                        className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-sm transition-colors ${sortMode === option.value ? "bg-[rgba(245,124,0,0.14)] font-semibold text-[color:var(--secondary)]" : "text-[color:var(--foreground)] hover:bg-[color:var(--surface-alt)]"}`}
+                      >
+                        {option.label}
+                        {sortMode === option.value ? (
+                          <span className="text-xs font-bold uppercase tracking-[0.24em]">Aktif</span>
+                        ) : null}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+          </div>
         </div>
 
         <div className="mt-4 flex flex-wrap gap-3">
