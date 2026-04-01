@@ -8,7 +8,7 @@ const FALLBACK_CATEGORIES: ProductCategory[] = buildCategories(FALLBACK_PRODUCTS
 const FALLBACK_FEATURED_PRODUCTS = FALLBACK_PRODUCTS.filter((product) => product.isFeatured);
 
 export async function getZiyadBooksCatalog(): Promise<CatalogData> {
-  const token = process.env.ZIYADBOOKS_API_TOKEN?.trim() || process.env.ZIYADBOOKS_BEARER_TOKEN?.trim();
+  const token = process.env.ZIYADBOOKS_BEARER_TOKEN?.trim();
 
   if (!token) {
     return {

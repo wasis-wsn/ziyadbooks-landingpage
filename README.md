@@ -28,7 +28,6 @@ npm run dev
 
 Set salah satu variable berikut agar katalog mengambil data dari API produksi/dev:
 
-- `ZIYADBOOKS_API_TOKEN`
 - `ZIYADBOOKS_BEARER_TOKEN`
 
 Jika token belum diisi, halaman akan tetap tampil dengan katalog fallback yang sudah dikurasi.
